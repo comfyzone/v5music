@@ -11,7 +11,7 @@
     Shuffle,
     List,
   } from "lucide-svelte";
-  import { getCookie } from "../session.svelte";
+  import { getCookie } from "../utils.svelte";
   import { onMount } from "svelte";
   import { fly } from "svelte/transition";
     import { getAvatarUrl } from "../utils.svelte";
