@@ -1,38 +1,34 @@
-# sv
+<div align="center">
+  <img alt="logo" src="src/lib/assets/favicon.svg" width="300px">
+  <h3><bold>v5music</bold></h3>
+  </br>
+  <span><b>v5music</b> is the fifth generation of comfy's music bot web interface / dashboard powered by <a href="https://svelte.dev/" target="_blank">svelte</a></span>
+</div>
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+<br/>
 
-## Creating a project
+# Collaborators:
 
-If you're seeing this, you've probably already done this step. Congrats!
+<table>
+  <tr>
+    <td align="center" width="150px">
+      <a href="https://github.com/pixelblob" target="_blank">
+        <img src="https://avatars.githubusercontent.com/u/34137159?v=4"/><br/>
+      </a>
+      <div><b>Pixel</b></div>
+    </td>
+    <td align="center" width="150px">
+      <a href="https://github.com/shaekenit" target="_blank">
+        <img src="https://avatars.githubusercontent.com/u/201653476?v=4"/><br/>
+      </a>
+      <div><b>Piro</b></div>
+    </td>
+    <td align="center" width="150px">
+      <a href="https://github.com/durpyneko" target="_blank">
+        <img src="https://avatars.githubusercontent.com/u/89787577?v=4"/><br/>
+      </a>
+      <div><b>durpy</b></div>
+    </td>
+  </tr>
+</table>
 
-```sh
-# create a new project in the current directory
-npx sv create
-
-# create a new project in my-app
-npx sv create my-app
-```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```sh
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```sh
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
