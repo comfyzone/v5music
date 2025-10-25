@@ -6,5 +6,8 @@ export default defineConfig({
 	plugins: [tailwindcss(), sveltekit()],
 	server: {
 		allowedHosts: ['pixelboop.net']
+	},
+	build: {
+		sourcemap: true
 	}
 });
