@@ -1,154 +1,102 @@
 <script lang="ts">
-  import { Button } from "$lib/components/Button";
-  import { LogIn, MailPlus, ChevronRight } from "lucide-svelte";
   import { onMount } from "svelte";
+  import { preloadData } from "$app/navigation";
+  import { getCookie } from "./utils.svelte";
+  let progress: number = 0;
 
-  const loginUrl = "/api/discord/login";
-  const inviteUrl =
-    "https://discord.com/oauth2/authorize?client_id=1220019991563206737";
+  onMount(async () => {
+    const sessionId: string | undefined = getCookie("sessionId");
+    const duration: number = 3000;
+    const start: number = performance.now();
 
-  let aboutOpen = false;
-  let contentEl: HTMLDivElement | null = null;
-  let maxHeight = "0px";
-  let opacity = 0;
+    console.log("test")
 
-  function toggleAbout() {
-    aboutOpen = !aboutOpen;
-    if (aboutOpen) {
-      requestAnimationFrame(() => {
-        if (contentEl) {
-          maxHeight = `${contentEl.scrollHeight}px`;
-          opacity = 1;
-          setTimeout(() => {
-            if (aboutOpen) maxHeight = "none";
-          }, 320);
-        } else {
-          maxHeight = "1000px";
-          opacity = 1;
-        }
-      });
-    } else {
-      if (contentEl) {
-        maxHeight = `${contentEl.scrollHeight}px`;
-        opacity = 1;
-        contentEl.offsetHeight;
-        requestAnimationFrame(() => {
-          maxHeight = "0px";
-          opacity = 0;
-        });
+    let preloading = [
+      preloadData("/dashboard"),
+      preloadData("/login")
+    ]
+
+    for (const preload of preloading) {
+      progress += 100/(preloading.length)*1
+      console.log(progress)
+      await preload
+    }
+
+    progress=100
+
+    
+
+    /* const animate = (time: number) => {
+      const elapsed = time - start;
+
+      let pct = (elapsed / duration) * 100;
+      const stutter = Math.random() < 0.15 ? Math.random() * -2 : 0;
+      pct += stutter;
+
+      progress = Math.min(Math.max(pct, 0), 100);
+
+      if (progress < 100) {
+        requestAnimationFrame(animate);
       } else {
-        maxHeight = "0px";
-        opacity = 0;
+        if (sessionId) {
+          //window.location.href = "/dashboard";
+        } else {
+          //window.location.href = "/login";
+        }
       }
-    }
-  }
+    };
 
-  function onKeyToggle(e: KeyboardEvent) {
-    if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
-      toggleAbout();
-    }
-  }
-
-  onMount(() => {
-    maxHeight = "0px";
-    opacity = 0;
+    requestAnimationFrame(animate); */
   });
 </script>
 
-<div
-  class="min-h-screen flex items-center justify-center bg-black text-white px-4 py-10"
->
+<div class="min-h-screen flex items-center justify-center bg-black px-4">
   <div
-    class="w-full max-w-sm bg-neutral-900/60 border border-white/10 backdrop-blur-md rounded-2xl p-6 shadow-xl text-center space-y-6 static"
+    class="w-full max-w-sm bg-neutral-900/60 border border-white/10 backdrop-blur-md rounded-2xl p-6 shadow-xl text-center space-y-6"
   >
-    <div class="space-y-2">
-      <h1 class="text-2xl font-semibold">Welcome</h1>
-      <p class="text-sm text-white/50">Sign in using your Discord account</p>
+    <h3 class="text-3xl font-bold mb-6 tracking-wide">Loading Dashboard</h3>
+
+    <div
+      class="w-full max-w-md bg-white/10 rounded-full h-3 overflow-hidden shadow-inner"
+    >
+      <div
+        class="h-3 rounded-full transition-all duration-30 animate-glow"
+        style={`width: 0%; background: linear-gradient(90deg, #7289da, #99aaff); --progress: ${progress}%`}
+      ></div>
     </div>
 
-    <div class="flex gap-2 w-full">
-      <Button
-        href={loginUrl}
-        variant="primary"
-        size="lg"
-        class="h-[52px] flex-1 flex items-center justify-center gap-2 bg-[#7289da] border border-[#7c99ff] hover:bg-[#809fff] hover:border-[#809fff] hover:shadow-[0_0_10px_rgba(114,137,218,0.4)] transition-all duration-200 p-4 rounded-lg"
-        aria-label="Login with Discord"
-      >
-        <LogIn size={18} /> Login with Discord
-      </Button>
-
-      <a
-        href={inviteUrl}
-        class="w-[52px] h-[52px] flex items-center justify-center bg-white/5 border border-white/10 rounded-lg hover:bg-green-500/60 hover:border-green-400/60 transition-colors"
-        aria-label="Create account"
-      >
-        <MailPlus size={20} />
-      </a>
-    </div>
-
-    <div class="w-full mt-4 text-left static">
-      <div class="accordion-group">
-        <button
-          type="button"
-          class="cursor-pointer w-full flex items-center justify-between px-4 py-3 bg-white/3 border border-white/6 hover:bg-white/4 transition-colors duration-200 select-none outline-none focus:outline-none focus-visible:outline-none active:outline-none {aboutOpen
-            ? 'rounded-t-lg border-b-0'
-            : 'rounded-lg'}"
-          tabindex="-1"
-          aria-expanded={aboutOpen}
-          aria-controls="about-lorem"
-          on:click={toggleAbout}
-          on:keydown={onKeyToggle}
-        >
-          <span class="text-sm font-medium text-white"
-            >Learn about Music Bot</span
-          >
-          <ChevronRight
-            class="w-4 h-4 text-white/70 transition-transform duration-200 {aboutOpen
-              ? '-rotate-90'
-              : ''}"
-          />
-        </button>
-
-        <div
-          id="about-lorem"
-          role="region"
-          aria-labelledby="about-lorem"
-          class="overflow-hidden transition-[max-height,opacity] duration-300 ease-[cubic-bezier(.2,.9,.2,1)] {aboutOpen
-            ? 'rounded-b-lg border-t-0'
-            : 'rounded-b-lg'}"
-          bind:this={contentEl}
-          style={`max-height: ${maxHeight}; opacity: ${opacity};`}
-        >
-          <div
-            class="px-4 py-3 bg-white/4 border border-white/6 border-t-0 text-sm text-white/70"
-          >
-            <p class="mb-2">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer
-              nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi.
-            </p>
-            <p>
-              Fusce nec tellus sed augue semper porta. Mauris massa. Vestibulum
-              lacinia arcu eget nulla. Curabitur sodales ligula in libero.
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
+    <p class="text-sm text-white/50 mt-4">dustying off the records...</p>
   </div>
 </div>
 
 <style>
-  .static {
-    position: static !important;
+  h3 {
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
   }
-  .accordion-group {
-    position: relative;
+
+  .animate-glow {
+    box-shadow: 0 0 5px rgba(114, 137, 218, 0.5);
+    animation: pulse 1.2s infinite ease-in-out, progress 10s forwards;
   }
-  .accordion-group > * {
-    transition: border-radius 0.2s ease;
+
+  @keyframes progress {
+  99% {
+    background-color: #9747FF; /* Keep the original color */
   }
-  .rotate-90 {
-    transform: rotate(90deg);
+  100% {
+    background-color: #14AE5C; /* Turn green at the end */
+    width: var(--progress);
+    /* width: 100%; */ /* Ensure the width reaches 100% */
+  }
+}
+
+  @keyframes pulse {
+    0%,
+    100% {
+      box-shadow: 0 0 5px rgba(114, 137, 218, 0.5);
+    }
+    50% {
+      box-shadow: 0 0 12px rgba(114, 137, 218, 0.8);
+    }
   }
 </style>
