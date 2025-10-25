@@ -2,7 +2,7 @@
     import { Button } from "$lib/components/Button";
     import { LogIn, MailPlus, ChevronRight } from "lucide-svelte";
     import { onMount } from "svelte";
-    import { getCookie } from "../session.svelte";
+    import { getCookie } from "../utils.svelte";
 
     const loginUrl = "/api/discord/login";
     const inviteUrl =
