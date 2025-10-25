@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { Button } from "$lib/components/Button";
+    import { BadButton } from "$lib/components/Button";
     import { LogIn, MailPlus, ChevronRight } from "lucide-svelte";
     import { onMount } from "svelte";
     import { getCookie } from "../utils.svelte";
@@ -76,7 +76,7 @@
         </div>
 
         <div class="flex gap-2 w-full">
-            <Button
+            <BadButton
                 href={loginUrl}
                 variant="primary"
                 size="lg"
@@ -84,7 +84,7 @@
                 aria-label="Login with Discord"
             >
                 <LogIn size={18} /> Login with Discord
-            </Button>
+            </BadButton>
 
             <div class="relative group">
                 <a

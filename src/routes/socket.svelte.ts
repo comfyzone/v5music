@@ -7,6 +7,7 @@ interface ServerToClientEvents {
 interface ClientToServerEvents {
     userData: (userData: UserData) => void;
     voiceChannelUpdate: (voiceChannel: VoiceChannel) => void;
+    update: (details: Track) => void;
 }
 
 
@@ -52,5 +53,45 @@ export interface VoiceChannel {
     "members": Member[],
     "guild": Guild
 }
+
+
+
+export interface Track {
+  id?: string
+  name?: string
+  title?: string
+  artists?: Artist[]
+  lengthMs: number
+  coverImage?: string
+  largeImage?: string
+  type: string
+  requester: Requester
+  playbackDuration: number
+  queueFinished: boolean
+  playerState: string
+  queueIndex: number
+}
+
+export interface Artist {
+  external_urls: ExternalUrls
+  href: string
+  id: string
+  name: string
+  type: string
+  uri: string
+}
+
+export interface ExternalUrls {
+  spotify: string
+}
+
+export interface Requester {
+  username: string
+  avatar: string
+  id: string
+}
+
+
+
 
 export const socket: Socket<ClientToServerEvents, ServerToClientEvents> = io({ transports: ["websocket"], path: "/api/socket.io" });
