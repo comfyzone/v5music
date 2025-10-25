@@ -1,7 +1,6 @@
 <div align="center">
   <img alt="logo" src="src/lib/assets/favicon.svg" width="300px">
   <h3><bold>v5music</bold></h3>
-  </br>
   <span><b>v5music</b> is the fifth generation of comfy's music bot web interface / dashboard powered by <a href="https://svelte.dev/" target="_blank">svelte</a></span>
 </div>
 
