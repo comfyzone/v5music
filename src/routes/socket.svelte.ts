@@ -1,0 +1,56 @@
+import { io, Socket } from "socket.io-client";
+
+interface ServerToClientEvents {
+    noArg: () => void;
+}
+
+interface ClientToServerEvents {
+    userData: (userData: UserData) => void;
+    voiceChannelUpdate: (voiceChannel: VoiceChannel) => void;
+}
+
+
+export interface UserData {
+    "id": string,
+    "username": string,
+    "globalName": string,
+    "avatar": string,
+    "defaultAvatarURL": string,
+    "avatarURL": string,
+    "displayAvatarURL": string
+}
+
+export interface User {
+    "id": string,
+    "username": string,
+    "globalName": string,
+    "avatar": string,
+    "bot": boolean
+}
+
+export interface VoiceState {
+    "selfDeaf": boolean,
+    "selfMute": boolean,
+    "selfVideo": boolean,
+    "serverDeaf": boolean,
+    "streaming": boolean
+}
+
+export interface Guild {
+    "id": string,
+    "name": string,
+    "icon": string
+}
+
+export interface Member {
+    "user": User,
+    "voice": VoiceState
+}
+
+export interface VoiceChannel {
+    "name": string,
+    "members": Member[],
+    "guild": Guild
+}
+
+export const socket: Socket<ClientToServerEvents, ServerToClientEvents> = io({ transports: ["websocket"], path: "/api/socket.io" });
