@@ -52,9 +52,10 @@
 
 <div class="min-h-screen flex items-center justify-center bg-black px-4">
   <div
-    class="w-full max-w-sm bg-neutral-900/60 border border-white/10 backdrop-blur-md rounded-2xl p-6 shadow-xl text-center space-y-6"
+  class="w-full max-w-sm bg-neutral-900/60 border border-white/10 backdrop-blur-md rounded-2xl p-6 shadow-xl text-center space-y-6"
   >
-    <h3 class="text-3xl font-bold mb-6 tracking-wide">Loading Dashboard</h3>
+  <img src="/loading.webp" alt="" style="width: 100%">
+    <!-- <h3 class="text-3xl font-bold mb-6 tracking-wide">Loading Dashboard</h3> -->
 
     <div
       class="w-full max-w-md bg-white/10 rounded-full h-3 overflow-hidden shadow-inner"
