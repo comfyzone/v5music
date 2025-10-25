@@ -7,8 +7,8 @@
 
 <br/>
 
-# Collaborators:
-
+# Contributors:
+<!-- workflow -->
 <table>
   <tr>
     <td align="center" width="150px">
