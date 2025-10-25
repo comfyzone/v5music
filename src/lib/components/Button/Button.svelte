@@ -154,10 +154,10 @@
   .outline {
     background-color: transparent;
     color: var(--gray-0);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--gray-600);
   }
   .outline:hover:not([aria-disabled="true"]) {
-    background-color: rgba(255, 255, 255, 0.02);
+    background-color: --gray-900;
   }
   .outline.single {
     border-radius: var(--btn-radius);
