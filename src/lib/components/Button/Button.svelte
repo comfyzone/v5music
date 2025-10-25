@@ -1,10 +1,14 @@
 <script lang="ts">
-  import { getContext, onMount, onDestroy } from "svelte";
-
+  import {
+    getContext,
+    onMount,
+    onDestroy,
+    createEventDispatcher,
+  } from "svelte";
+  import { RefreshCw } from "lucide-svelte";
   type ButtonVariant = "primary" | "secondary" | "outline";
   type ButtonSize = "sm" | "md" | "lg";
   type ButtonPosition = "first" | "middle" | "last" | "single";
-
   export let variant: ButtonVariant = "primary";
   export let size: ButtonSize = "md";
   export let disabled = false;
@@ -13,7 +17,6 @@
   export let href: string | null = null;
   export let onClick: (e: MouseEvent) => void = () => {};
   export let borderRadius: string | null = null;
-
   let position: ButtonPosition = "single";
   let vertical = false;
   let rounded = "12px";
@@ -25,7 +28,10 @@
   }
 
   const group = getContext<ButtonGroupContext | undefined>("button-group");
+
   let unregister: (() => void) | null = null;
+
+  const dispatch = createEventDispatcher();
 
   onMount(() => {
     if (group?.register) {
@@ -40,9 +46,7 @@
   });
 
   onDestroy(() => {
-    if (unregister) {
-      unregister();
-    }
+    if (unregister) unregister();
   });
 
   function handleClick(e: MouseEvent) {
@@ -51,113 +55,31 @@
       return;
     }
     onClick(e);
+    dispatch("click", e);
   }
 
-  $: computedBorderRadius =
-    borderRadius !== null
-      ? borderRadius
-      : vertical
-        ? position === "first"
-          ? `${rounded} ${rounded} 0 0`
-          : position === "last"
-            ? `0 0 ${rounded} ${rounded}`
-            : "0"
-        : position === "first"
-          ? `${rounded} 0 0 ${rounded}`
-          : position === "last"
-            ? `0 ${rounded} ${rounded} 0`
-            : "0";
-
-  $: computedBorderStyle = (() => {
-    if (variant !== "outline") return "";
-    
-    if (position === "single") return "border: 1px solid var(--gray-600);";
-    
-    if (vertical) {
-      switch (position) {
-        case "first":
-          return "border: 1px solid var(--gray-600); border-bottom: none;";
-        case "middle":
-          return "border-left: 1px solid var(--gray-600); border-right: 1px solid var(--gray-600); border-bottom: none;";
-        case "last":
-          return "border: 1px solid var(--gray-600); border-top: none;";
-      }
-    } else {
-      switch (position) {
-        case "first":
-          return "border: 1px solid var(--gray-600); border-right: none;";
-        case "middle":
-          return "border-top: 1px solid var(--gray-600); border-bottom: 1px solid var(--gray-600); border-right: none;";
-        case "last":
-          return "border: 1px solid var(--gray-600); border-left: none;";
-      }
-    }
-    
-    return "border: 1px solid var(--gray-600);";
-  })();
-
-  const sizeStyles = {
-    sm: "padding: 0.25rem 0.6rem; font-size: 0.875rem; line-height: 1.25rem;",
-    md: "padding: 0.5rem 1rem; font-size: 1rem; line-height: 1.5rem;",
-    lg: "padding: 0.75rem 1.25rem; font-size: 1.125rem; line-height: 1.75rem;",
-  };
+  $: sizeClass = size === "sm" ? "btn-sm" : size === "lg" ? "btn-lg" : "btn-md";
+  $: posClass = position;
+  $: variantClass = variant;
+  $: fullClass = fullWidth ? "w-full" : "";
+  $: radiusVar = borderRadius ?? rounded;
 </script>
 
-{#if href}
-  <a
-    {href}
-    class={`btn ${variant} ${position}`}
-    style={`border-radius: ${computedBorderRadius}; ${computedBorderStyle} ${sizeStyles[size]}; width: ${fullWidth ? "100%" : "auto"};`}
-    aria-disabled={disabled ? "true" : "false"}
-    on:click={handleClick}
-  >
-    {#if loading}
-      <svg class="spinner" viewBox="0 0 24 24">
-        <circle
-          cx="12"
-          cy="12"
-          r="10"
-          stroke="currentColor"
-          stroke-width="4"
-          class="spinner-bg"
-        />
-        <path
-          fill="currentColor"
-          d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-          class="spinner-fg"
-        />
-      </svg>
-    {/if}
-    <slot />
-  </a>
-{:else}
-  <button
-    class={`btn ${variant} ${position}`}
-    style={`border-radius: ${computedBorderRadius}; ${computedBorderStyle} ${sizeStyles[size]}; width: ${fullWidth ? "100%" : "auto"};`}
-    {disabled}
-    aria-disabled={disabled ? "true" : "false"}
-    on:click={handleClick}
-  >
-    {#if loading}
-      <svg class="spinner" viewBox="0 0 24 24">
-        <circle
-          cx="12"
-          cy="12"
-          r="10"
-          stroke="currentColor"
-          stroke-width="4"
-          class="spinner-bg"
-        />
-        <path
-          fill="currentColor"
-          d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-          class="spinner-fg"
-        />
-      </svg>
-    {/if}
-    <slot />
-  </button>
-{/if}
+<svelte:element
+  this={href ? "a" : "button"}
+  href={href ?? undefined}
+  class={`btn ${variantClass} ${posClass} ${sizeClass} ${fullClass}`}
+  aria-disabled={disabled ? "true" : "false"}
+  on:click={handleClick}
+  {...$$restProps}
+  style={`--btn-radius: ${radiusVar};`}
+>
+  {#if loading}
+    <RefreshCw class="spinner" aria-hidden="false" role="status" />
+    <span class="sr-only">Loading</span>
+  {/if}
+  <slot />
+</svelte:element>
 
 <style>
   :global(:root) {
@@ -174,8 +96,8 @@
     --gray-900: #171717;
     --gray-950: #090909;
     --transition-fast: 160ms;
+    --btn-radius: 12px;
   }
-
   .btn {
     display: inline-flex;
     align-items: center;
@@ -185,79 +107,104 @@
     transition:
       background-color var(--transition-fast),
       color var(--transition-fast),
-      border-color var(--transition-fast);
+      border-color var(--transition-fast),
+      transform var(--transition-fast);
     font-weight: 500;
     line-height: 1;
-    border-radius: 0;
-    color: var(--gray-50);
+    border-radius: var(--btn-radius);
+    color: var(--gray-0);
     user-select: none;
     border: none;
+    text-decoration: none;
   }
-
-  .btn:disabled,
   .btn[aria-disabled="true"] {
     cursor: not-allowed;
-    opacity: 0.4;
+    opacity: 0.45;
     pointer-events: none;
   }
-
-  /* Primary */
+  .btn-sm {
+    padding: 0.25rem 0.6rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+  }
+  .btn-md {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    line-height: 1.5rem;
+  }
+  .btn-lg {
+    padding: 0.75rem 1.25rem;
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+  }
   .primary {
-    background-color: var(--gray-100);
-    color: var(--gray-950);
+    background-color: var(--gray-0);
+    color: var(--gray-900);
   }
-  .primary:hover:not(:disabled):not([aria-disabled="true"]) {
-    background-color: var(--gray-300);
+  .primary:hover:not([aria-disabled="true"]) {
+    filter: brightness(0.95);
   }
-  .primary:active:not(:disabled):not([aria-disabled="true"]) {
-    background-color: var(--gray-400);
-    color: var(--gray-950);
-  }
-
-  /* Secondary */
   .secondary {
     background-color: var(--gray-700);
     color: var(--gray-0);
   }
-  .secondary:hover:not(:disabled):not([aria-disabled="true"]) {
-    background-color: var(--gray-700);
-    color: var(--gray-50);
+  .secondary:hover:not([aria-disabled="true"]) {
+    filter: brightness(0.95);
   }
-  .secondary:active:not(:disabled):not([aria-disabled="true"]) {
-    background-color: var(--gray-800);
-    color: var(--gray-0);
-  }
-
-  /* Outline */
   .outline {
-    background-color: var(--gray-800);
-    color: var(--gray-200);
-    outline: none;
-  }
-  .outline:hover:not(:disabled):not([aria-disabled="true"]) {
-    background-color: var(--gray-700);
+    background-color: transparent;
     color: var(--gray-0);
+    border: 1px solid rgba(255, 255, 255, 0.08);
   }
-  .outline:active:not(:disabled):not([aria-disabled="true"]) {
-    background-color: var(--gray-800);
-    color: var(--gray-100);
+  .outline:hover:not([aria-disabled="true"]) {
+    background-color: rgba(255, 255, 255, 0.02);
   }
-
+  .outline.single {
+    border-radius: var(--btn-radius);
+  }
+  .outline.first {
+    border-right: none;
+  }
+  .outline.middle {
+    border-left: none;
+    border-right: none;
+  }
+  .outline.last {
+    border-left: none;
+  }
+  .outline.first.vertical {
+    border-bottom: none;
+  }
+  .outline.middle.vertical {
+    border-top: none;
+    border-bottom: none;
+  }
+  .outline.last.vertical {
+    border-top: none;
+  }
   .spinner {
     width: 1rem;
     height: 1rem;
     animation: spin 1s linear infinite;
-  }
-  .spinner-bg {
-    opacity: 0.2;
-    fill: none;
-  }
-  .spinner-fg {
-    opacity: 0.8;
+    margin-right: 0.25rem;
+    flex-shrink: 0;
+    stroke: currentColor;
+    fill: currentColor;
   }
   @keyframes spin {
     to {
       transform: rotate(360deg);
     }
+  }
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
   }
 </style>
