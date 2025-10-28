@@ -1,57 +1,58 @@
 import { io, Socket } from "socket.io-client";
+import { apiUrl } from "./api";
 
-interface ServerToClientEvents {
-    noArg: () => void;
+export interface ServerToClientEvents {
+  noArg: () => void;
 }
 
-interface ClientToServerEvents {
-    userData: (userData: UserData) => void;
-    voiceChannelUpdate: (voiceChannel: VoiceChannel) => void;
-    update: (details: Track) => void;
+export interface ClientToServerEvents {
+  userData: (userData: UserData) => void;
+  voiceChannelUpdate: (voiceChannel: VoiceChannel) => void;
+  update: (details: Track) => void;
 }
 
 
 export interface UserData {
-    "id": string,
-    "username": string,
-    "globalName": string,
-    "avatar": string,
-    "defaultAvatarURL": string,
-    "avatarURL": string,
-    "displayAvatarURL": string
+  "id": string,
+  "username": string,
+  "globalName": string,
+  "avatar": string,
+  "defaultAvatarURL": string,
+  "avatarURL": string,
+  "displayAvatarURL": string
 }
 
 export interface User {
-    "id": string,
-    "username": string,
-    "globalName": string,
-    "avatar": string,
-    "bot": boolean
+  "id": string,
+  "username": string,
+  "globalName": string,
+  "avatar": string,
+  "bot": boolean
 }
 
 export interface VoiceState {
-    "selfDeaf": boolean,
-    "selfMute": boolean,
-    "selfVideo": boolean,
-    "serverDeaf": boolean,
-    "streaming": boolean
+  "selfDeaf": boolean,
+  "selfMute": boolean,
+  "selfVideo": boolean,
+  "serverDeaf": boolean,
+  "streaming": boolean
 }
 
 export interface Guild {
-    "id": string,
-    "name": string,
-    "icon": string
+  "id": string,
+  "name": string,
+  "icon": string
 }
 
 export interface Member {
-    "user": User,
-    "voice": VoiceState
+  "user": User,
+  "voice": VoiceState
 }
 
 export interface VoiceChannel {
-    "name": string,
-    "members": Member[],
-    "guild": Guild
+  "name": string,
+  "members": Member[],
+  "guild": Guild
 }
 
 
@@ -90,8 +91,3 @@ export interface Requester {
   avatar: string
   id: string
 }
-
-
-
-
-export const socket: Socket<ClientToServerEvents, ServerToClientEvents> = io({ transports: ["websocket"], path: "/api/socket.io" });

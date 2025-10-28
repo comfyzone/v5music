@@ -1,10 +1,11 @@
 <script lang="ts">
-    import { BadButton } from "$lib/components/Button";
+    import { Button } from "$lib/components/ui/button/index.js";
     import { LogIn, MailPlus, ChevronRight } from "lucide-svelte";
     import { onMount } from "svelte";
     import { getCookie } from "../utils.svelte";
+    import { apiUrl } from "../api";
 
-    const loginUrl = "/api/discord/login";
+    const loginUrl = apiUrl + "/discord/login";
     const inviteUrl =
         "https://discord.com/oauth2/authorize?client_id=1220019991563206737";
 
@@ -76,15 +77,14 @@
         </div>
 
         <div class="flex gap-2 w-full">
-            <BadButton
+            <Button
                 href={loginUrl}
-                variant="primary"
                 size="lg"
                 class="h-[52px] flex-1 flex items-center justify-center gap-2 bg-[#7289da] border border-[#7c99ff] hover:bg-[#809fff] hover:border-[#809fff] hover:shadow-[0_0_10px_rgba(114,137,218,0.4)] transition-all duration-200 p-4 rounded-lg"
                 aria-label="Login with Discord"
             >
                 <LogIn size={18} /> Login with Discord
-            </BadButton>
+            </Button>
 
             <div class="relative group">
                 <a

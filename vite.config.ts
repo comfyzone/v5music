@@ -5,7 +5,7 @@ import { defineConfig } from 'vite';
 export default defineConfig({
 	plugins: [tailwindcss(), sveltekit()],
 	server: {
-		allowedHosts: ['pixelboop.net']
+		allowedHosts: ['pixelboop.net', 'v5dev.pixelboop.net']
 	},
 	build: {
 		sourcemap: true

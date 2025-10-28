@@ -10,4 +10,6 @@ declare global {
 	}
 }
 
+declare module "https://cdn.jsdelivr.net/gh/shaekenit/cdp-helpers/gh-profile.js";
+
 export {};

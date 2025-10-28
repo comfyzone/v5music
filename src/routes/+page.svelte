@@ -1,30 +1,41 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { preloadData } from "$app/navigation";
+  import { goto, preloadData } from "$app/navigation";
   import { getCookie } from "./utils.svelte";
   let progress: number = 0;
+  const start: number = performance.now();
+  const minLoadingTime = 500
 
   onMount(async () => {
     const sessionId: string | undefined = getCookie("sessionId");
     const duration: number = 3000;
-    const start: number = performance.now();
-
-    console.log("test")
-
-    let preloading = [
-      preloadData("/dashboard"),
-      preloadData("/login")
-    ]
-
-    for (const preload of preloading) {
-      progress += 100/(preloading.length)*1
-      console.log(progress)
-      await preload
-    }
-
-    progress=100
-
     
+    
+
+    console.log("test");
+
+    let preloading = [preloadData("/"), preloadData("/dashboard"), preloadData("/login")];
+
+    let index = 1
+    for (const preload of preloading) {
+      await preload;
+      progress = (100 / preloading.length) * index;
+      console.log(progress);
+      index++
+    }
+    
+    let loadTime = performance.now() - start
+    console.log(`Took ${loadTime}ms`)
+
+    let sleepTime = Math.max(minLoadingTime - loadTime, 0)
+    console.log(`Sleeping for ${sleepTime}ms`)
+    await new Promise(r => setTimeout(r, sleepTime));
+
+    if (sessionId) {
+      goto(`/dashboard`, { replaceState: true }) 
+    } else {
+      goto(`/login`, { replaceState: true }) 
+    }
 
     /* const animate = (time: number) => {
       const elapsed = time - start;
@@ -52,9 +63,9 @@
 
 <div class="min-h-screen flex items-center justify-center bg-black px-4">
   <div
-  class="w-full max-w-sm bg-neutral-900/60 border border-white/10 backdrop-blur-md rounded-2xl p-6 shadow-xl text-center space-y-6"
+    class="w-full max-w-sm bg-neutral-900/60 border border-white/10 backdrop-blur-md rounded-2xl p-6 shadow-xl text-center space-y-6"
   >
-  <img src="/loading.webp" alt="" style="width: 100%">
+    <img src="/loading.webp" alt="" style="width: 100%" />
     <!-- <h3 class="text-3xl font-bold mb-6 tracking-wide">Loading Dashboard</h3> -->
 
     <div
@@ -77,19 +88,21 @@
 
   .animate-glow {
     box-shadow: 0 0 5px rgba(114, 137, 218, 0.5);
-    animation: pulse 1.2s infinite ease-in-out, progress 10s forwards;
+    animation:
+      pulse 1.2s infinite ease-in-out,
+      progress 0.5s forwards;
   }
 
   @keyframes progress {
-  99% {
-    background-color: #9747FF; /* Keep the original color */
+    99% {
+      background-color: #9747ff; /* Keep the original color */
+    }
+    100% {
+      background-color: #14ae5c; /* Turn green at the end */
+      width: var(--progress);
+      /* width: 100%; */ /* Ensure the width reaches 100% */
+    }
   }
-  100% {
-    background-color: #14AE5C; /* Turn green at the end */
-    width: var(--progress);
-    /* width: 100%; */ /* Ensure the width reaches 100% */
-  }
-}
 
   @keyframes pulse {
     0%,
