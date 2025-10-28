@@ -29,14 +29,14 @@
   import { io, type Socket } from "socket.io-client";
   import { pause, previous, skip } from "../api";
   import { Skeleton } from "$lib/components/ui/skeleton";
-    import Listeners from "$lib/components/Listeners.svelte";
+  import Listeners from "$lib/components/Listeners.svelte";
 
   const dispatch = createEventDispatcher();
   const logoutUrl = "/api/discord/logout";
 
   let avatarMenuRef: HTMLDivElement | undefined;
   let listeners: Member[] = [];
-  
+
   let avatarMenuOpen = false;
   let songLink = "";
 
@@ -91,13 +91,10 @@
     loading.next = false;
   });
 
-  
-
   let progressInterval: NodeJS.Timeout;
   onMount(() => {
     const sessionId = getCookie("sessionId");
     if (!sessionId) window.location.href = "/login";
-    
 
     progressInterval = setInterval(() => {
       if (currentlyPlaying && currentlyPlaying.playerState === "playing") {
@@ -312,64 +309,6 @@
         </div>
       </div>
 
-      <div class="avatar-section lg:flex lg:items-center lg:justify-end">
-        <div class="flex items-center justify-end space-x-2 lg:pr-8">
-          <Button
-            variant="ghost"
-            size="sm"
-            class="p-1 lg:hover:bg-[#5865F2] lg:hover:text-white"
-            onclick={() => dispatch("shuffle")}
-            aria-label="Shuffle"
-          >
-            <Shuffle size={16} />
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            class="p-1 lg:hover:bg-[#5865F2] lg:hover:text-white"
-            onclick={() => dispatch("list")}
-            aria-label="Open list"
-          >
-            <List size={16} />
-          </Button>
-
-          {#if user}
-            <div class="relative" bind:this={avatarMenuRef}>
-              <Button
-                variant="ghost"
-                size="sm"
-                class="w-8 h-8 rounded-full overflow-hidden p-0 border border-[#525252] lg:hover:bg-[#5865F2] lg:w-10 lg:h-10"
-                onclick={() => (avatarMenuOpen = !avatarMenuOpen)}
-                aria-label="User menu"
-              >
-                <Avatar className="w-full h-full rounded-full">
-                  <AvatarImage
-                    className="w-full h-full object-cover"
-                    src={user.avatarURL}
-                    alt={user.username}
-                  />
-                  <AvatarFallback
-                    >{(user.username || "ER")
-                      .slice(0, 2)
-                      .toUpperCase()}</AvatarFallback
-                  >
-                </Avatar>
-              </Button>
-
-              {#if avatarMenuOpen}
-                <Button
-                  onclick={() => (window.location.href = logoutUrl)}
-                  class="absolute -top-12 left-1/2 transform -translate-x-1/2 w-10 h-10 text-red-400 bg-[#111111] rounded-full flex items-center justify-center border border-[#333333] z-50"
-                  aria-label="Logout"
-                >
-                  <LogOut size={16} />
-                </Button>
-              {/if}
-            </div>
-          {/if}
-        </div>
-      </div>
-
       <div class="controls-section">
         <div class="flex flex-col items-center space-y-2 w-full">
           <div class="flex items-center justify-center space-x-4">
@@ -440,17 +379,72 @@
           </div>
         </div>
       </div>
+
+      <div class="avatar-section lg:flex lg:items-center lg:justify-end">
+        <div class="flex items-center justify-end space-x-2 lg:pr-8">
+          <Button
+            variant="ghost"
+            size="sm"
+            class="p-1 lg:hover:bg-[#5865F2] lg:hover:text-white"
+            onclick={() => dispatch("shuffle")}
+            aria-label="Shuffle"
+          >
+            <Shuffle size={16} />
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            class="p-1 lg:hover:bg-[#5865F2] lg:hover:text-white"
+            onclick={() => dispatch("list")}
+            aria-label="Open list"
+          >
+            <List size={16} />
+          </Button>
+
+          {#if user}
+            <div class="relative" bind:this={avatarMenuRef}>
+              <Button
+                variant="ghost"
+                size="sm"
+                class="w-8 h-8 rounded-full overflow-hidden p-0 border border-[#525252] lg:hover:bg-[#5865F2] lg:w-10 lg:h-10"
+                onclick={() => (avatarMenuOpen = !avatarMenuOpen)}
+                aria-label="User menu"
+              >
+                <Avatar className="w-full h-full rounded-full">
+                  <AvatarImage
+                    className="w-full h-full object-cover"
+                    src={user.avatarURL}
+                    alt={user.username}
+                  />
+                  <AvatarFallback
+                    >{(user.username || "ER")
+                      .slice(0, 2)
+                      .toUpperCase()}</AvatarFallback
+                  >
+                </Avatar>
+              </Button>
+
+              {#if avatarMenuOpen}
+                <Button
+                  onclick={() => (window.location.href = logoutUrl)}
+                  class="absolute -top-12 left-1/2 transform -translate-x-1/2 w-10 h-10 text-red-400 bg-[#111111] rounded-full flex items-center justify-center border border-[#333333] z-50"
+                  aria-label="Logout"
+                >
+                  <LogOut size={16} />
+                </Button>
+              {/if}
+            </div>
+          {/if}
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
 <style>
   .ui-shell {
-    display: grid;
-    grid-template-rows: auto 1fr auto;
-    align-items: center;
-    justify-items: center;
-    inset: 0;
+    display: flex;
+    flex-direction: column;
   }
 
   .ui-shell.pointer-events-none {
@@ -471,6 +465,7 @@
 
   .ui-center {
     width: 100%;
+    height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -511,47 +506,48 @@
 
   .mobile-player-grid {
     pointer-events: auto;
-    display: grid;
-    grid-template-columns: 1fr auto;
-    grid-template-rows: auto auto;
-    grid-template-areas:
-      "song-info avatar-section"
-      "controls controls";
-    gap: 0.75rem;
-    align-items: center;
+    display: flex;
     width: 100%;
     box-sizing: border-box;
-    margin: 0;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+
+  .avatar-section {
+    justify-content: end;
+  }
+
+  .song-info-section,
+  .avatar-section,
+  .controls-section {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+    flex-basis: 0;
   }
 
   .song-info-section {
-    grid-area: song-info;
+    overflow: auto
   }
-  .avatar-section {
-    grid-area: avatar-section;
-  }
-  .controls-section {
-    grid-area: controls;
+
+  @media (max-width: 1024px) {
+    .controls-section {
+      min-width: 100%;
+      order: 1;
+    }
+    .avatar-section {
+      flex-grow: 0;
+    }
   }
 
   @media (min-width: 1024px) {
     .mobile-player-grid {
-      grid-template-columns: 1fr 2fr 1fr;
-      grid-template-rows: auto;
-      grid-template-areas: "song-info controls avatar-section";
-      gap: 0;
       border-radius: 1rem;
       margin: 1rem;
       border: 1px solid rgb(255 255 255 / 0.1);
       padding: 1rem;
       align-items: stretch;
       min-height: 80px;
-    }
-
-    .song-info-section,
-    .avatar-section {
-      display: flex;
-      align-items: center;
     }
   }
 
