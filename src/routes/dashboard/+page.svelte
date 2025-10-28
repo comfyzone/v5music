@@ -30,14 +30,15 @@
   import { pause, previous, skip } from "../api";
   import { Skeleton } from "$lib/components/ui/skeleton";
   import Listeners from "$lib/components/Listeners.svelte";
+    import UserMenu from "$lib/components/UserMenu.svelte";
 
   const dispatch = createEventDispatcher();
   const logoutUrl = "/api/discord/logout";
 
-  let avatarMenuRef: HTMLDivElement | undefined;
+  
   let listeners: Member[] = [];
 
-  let avatarMenuOpen = false;
+  
   let songLink = "";
 
   let progress = 0;
@@ -269,7 +270,6 @@
       class="w-full bg-[#0a0a0a] border-t border-white/10 backdrop-blur-md p-3 text-white shadow-xl mobile-player-grid"
       role="region"
       aria-label="Music player"
-      bind:this={avatarMenuRef}
     >
       <div class="song-info-section lg:flex lg:items-center lg:justify-start">
         <div class="flex items-center space-x-3 w-full min-w-0 lg:pl-8">
@@ -401,40 +401,7 @@
             <List size={16} />
           </Button>
 
-          {#if user}
-            <div class="relative" bind:this={avatarMenuRef}>
-              <Button
-                variant="ghost"
-                size="sm"
-                class="w-8 h-8 rounded-full overflow-hidden p-0 border border-[#525252] lg:hover:bg-[#5865F2] lg:w-10 lg:h-10"
-                onclick={() => (avatarMenuOpen = !avatarMenuOpen)}
-                aria-label="User menu"
-              >
-                <Avatar className="w-full h-full rounded-full">
-                  <AvatarImage
-                    className="w-full h-full object-cover"
-                    src={user.avatarURL}
-                    alt={user.username}
-                  />
-                  <AvatarFallback
-                    >{(user.username || "ER")
-                      .slice(0, 2)
-                      .toUpperCase()}</AvatarFallback
-                  >
-                </Avatar>
-              </Button>
-
-              {#if avatarMenuOpen}
-                <Button
-                  onclick={() => (window.location.href = logoutUrl)}
-                  class="absolute -top-12 left-1/2 transform -translate-x-1/2 w-10 h-10 text-red-400 bg-[#111111] rounded-full flex items-center justify-center border border-[#333333] z-50"
-                  aria-label="Logout"
-                >
-                  <LogOut size={16} />
-                </Button>
-              {/if}
-            </div>
-          {/if}
+          <UserMenu {user} />
         </div>
       </div>
     </div>
@@ -527,7 +494,7 @@
   }
 
   .song-info-section {
-    overflow: auto
+    overflow: auto;
   }
 
   @media (max-width: 1024px) {
