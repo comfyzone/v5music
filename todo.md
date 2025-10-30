@@ -2,3 +2,4 @@
 
 ### Frontend
 - [] Add Clear Queue Button
+- [] Implement Queue List
