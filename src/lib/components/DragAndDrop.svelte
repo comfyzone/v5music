@@ -10,14 +10,20 @@
 
         var songUrls = ev.dataTransfer
             .getData("text/plain")
-            .split("\n")
-            .filter((s) => s.startsWith("https://open.spotify.com/track/"));
+            .split("\n");
+
+        console.log(songUrls)
         if (songUrls.length == 0) return;
 
         if (songUrls.length == 1) {
             playResource(songUrls[0]);
             return;
         }
+
+        songUrls = ev.dataTransfer
+            .getData("text/plain")
+            .split("\n")
+            .filter((s) => s.startsWith("https://open.spotify.com/track/"));
 
         queueSongIds(songUrls.map((s) => s.split("/").at(-1) || ""));
     }
