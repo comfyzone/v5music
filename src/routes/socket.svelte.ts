@@ -55,7 +55,9 @@ export interface VoiceChannel {
   "guild": Guild
 }
 
-
+export interface Image {
+  url: string
+}
 
 export interface Track {
   id?: string
@@ -63,8 +65,7 @@ export interface Track {
   title?: string
   artists?: Artist[]
   lengthMs: number
-  coverImage?: string
-  largeImage?: string
+  images?: Image[]
   type: string
   requester: Requester
   playbackDuration: number

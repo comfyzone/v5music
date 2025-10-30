@@ -183,10 +183,10 @@
 <div
   class="fixed inset-0 -z-10 overflow-hidden transition-all duration-1000 ease-in-out select-none pointer-events-none"
 >
-  {#if currentlyPlaying?.largeImage}
+  {#if currentlyPlaying?.images && currentlyPlaying.images.length > 0}
     <div
       class="absolute inset-0 bg-cover bg-center bg-no-repeat scale-105"
-      style="background-image: url('{currentlyPlaying.largeImage}'); filter: blur(40px) brightness(0.7); transform: scale(1.1);"
+      style="background-image: url('{currentlyPlaying.images[0].url}'); filter: blur(40px) brightness(0.7); transform: scale(1.1);"
       aria-hidden="true"
     ></div>
   {:else}
@@ -228,9 +228,9 @@
       out:fly={{ y: -20, duration: 500 }}
       aria-hidden={currentlyPlaying ? "false" : "true"}
     >
-      {#if currentlyPlaying?.largeImage}
+      {#if currentlyPlaying?.images && currentlyPlaying.images.length > 0}
         <img
-          src={currentlyPlaying.largeImage}
+          src={currentlyPlaying.images[0].url}
           alt={currentlyPlaying.title || currentlyPlaying.name || "Album Cover"}
           class="w-full h-full object-cover rounded-4xl shadow-4xl shadow-black/50"
         />
@@ -276,9 +276,9 @@
           <div
             class="w-10 h-10 rounded-xl shrink-0 overflow-hidden bg-[#525252] lg:w-12 lg:h-12 lg:rounded-2xl"
           >
-            {#if currentlyPlaying?.coverImage}
+            {#if currentlyPlaying?.images && currentlyPlaying.images.length > 0}
               <img
-                src={currentlyPlaying.coverImage}
+                src={currentlyPlaying.images.at(-1)?.url}
                 alt={currentlyPlaying.title || currentlyPlaying.name || "Cover"}
                 class="w-full h-full object-cover"
               />
