@@ -59,6 +59,11 @@
     currentPlayerState = playerState;
   });
 
+  let currentQueue: Track[] | undefined;
+  socket.on("queue", (queue)=>{
+    currentQueue = queue
+  })
+
   onMount(() => {
     const sessionId = getCookie("sessionId");
     if (!sessionId) window.location.href = "/login";
@@ -158,7 +163,7 @@
     </div>
   </div>
 
-  <Player {socket} {currentlyPlaying} {currentPlayerState} {user} />
+  <Player {socket} {currentlyPlaying} {currentPlayerState} {user} {currentQueue} />
 </div>
 
 <style>

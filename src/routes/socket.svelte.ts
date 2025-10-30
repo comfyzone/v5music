@@ -10,6 +10,7 @@ export interface ClientToServerEvents {
   voiceChannelUpdate: (voiceChannel: VoiceChannel) => void;
   update: (details: Track | undefined) => void;
   playerStateUpdate: (playerState: AudioPlayerStatus) => void;
+  queue: (queue: Track[] | undefined) => void;
 }
 
 export enum AudioPlayerStatus {

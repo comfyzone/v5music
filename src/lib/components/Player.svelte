@@ -30,11 +30,13 @@
         currentlyPlaying,
         currentPlayerState,
         user,
+        currentQueue
     }: {
         socket: Socket<ClientToServerEvents, ServerToClientEvents>;
         currentlyPlaying: Track | undefined;
         currentPlayerState: AudioPlayerStatus | undefined;
         user: UserData | undefined;
+        currentQueue: Track[] | undefined;
     } = $props();
 
     const dispatch = createEventDispatcher();
@@ -206,7 +208,7 @@
                         size="sm"
                         class="p-2 lg:hover:bg-[#5865F2] lg:hover:text-white lg:hover:scale-110"
                         onclick={handlePrevClick}
-                        disabled={loading.prev ||
+                        disabled={!currentlyPlaying || currentlyPlaying.queueIndex <= 0 || loading.prev ||
                             (currentPlayerState !== AudioPlayerStatus.Paused &&
                                 currentPlayerState !==
                                     AudioPlayerStatus.Playing)}
@@ -225,7 +227,7 @@
                         size="sm"
                         class="p-2 lg:hover:bg-[#5865F2] lg:hover:text-white lg:hover:scale-110"
                         onclick={handlePlayClick}
-                        disabled={loading.play ||
+                        disabled={!currentlyPlaying || loading.play ||
                             (currentPlayerState !== AudioPlayerStatus.Paused &&
                                 currentPlayerState !==
                                     AudioPlayerStatus.Playing)}
@@ -247,7 +249,7 @@
                         size="sm"
                         class="p-2 lg:hover:bg-[#5865F2] lg:hover:text-white lg:hover:scale-110"
                         onclick={handleNextClick}
-                        disabled={loading.next ||
+                        disabled={!currentQueue || !currentlyPlaying || currentlyPlaying.queueIndex >= currentQueue.length-1 || loading.next ||
                             (currentPlayerState !== AudioPlayerStatus.Paused &&
                                 currentPlayerState !==
                                     AudioPlayerStatus.Playing)}
