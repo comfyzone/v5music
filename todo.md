@@ -3,4 +3,4 @@
 ### Frontend
 - [] Add Clear Queue Button
 - [] Implement Queue List
-- [] Implement playerstate socket event
+- [x] Implement playerstate socket event

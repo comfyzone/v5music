@@ -6,6 +6,7 @@
     type Track,
     type ClientToServerEvents,
     type ServerToClientEvents,
+    AudioPlayerStatus,
   } from "../socket.svelte";
   import { Avatar, AvatarImage, AvatarFallback } from "$lib/components/Avatar";
   import { Button } from "$lib/components/ui/button/index.js";
@@ -19,6 +20,7 @@
     Shuffle,
     List,
     ExternalLink,
+    Pause,
   } from "lucide-svelte";
   import { getCookie } from "../utils.svelte";
   import { onMount } from "svelte";
@@ -30,15 +32,13 @@
   import { pause, previous, skip } from "../api";
   import { Skeleton } from "$lib/components/ui/skeleton";
   import Listeners from "$lib/components/Listeners.svelte";
-    import UserMenu from "$lib/components/UserMenu.svelte";
+  import UserMenu from "$lib/components/UserMenu.svelte";
 
   const dispatch = createEventDispatcher();
   const logoutUrl = "/api/discord/logout";
 
-  
   let listeners: Member[] = [];
 
-  
   let songLink = "";
 
   let progress = 0;
@@ -72,6 +72,7 @@
   let currentlyPlaying: Track | undefined;
   socket.on("update", (details) => {
     currentlyPlaying = details;
+    currentPlayerState = currentlyPlaying?.playerState
 
     if (details) {
       currentTrackLength = Math.floor(details.lengthMs / 1000);
@@ -90,6 +91,11 @@
     loading.prev = false;
     loading.play = false;
     loading.next = false;
+  });
+
+  let currentPlayerState: AudioPlayerStatus | undefined;
+  socket.on("playerStateUpdate", (playerState) => {
+    currentPlayerState = playerState;
   });
 
   let progressInterval: NodeJS.Timeout;
@@ -186,7 +192,8 @@
   {#if currentlyPlaying?.images && currentlyPlaying.images.length > 0}
     <div
       class="absolute inset-0 bg-cover bg-center bg-no-repeat scale-105"
-      style="background-image: url('{currentlyPlaying.images[0].url}'); filter: blur(40px) brightness(0.7); transform: scale(1.1);"
+      style="background-image: url('{currentlyPlaying.images[0]
+        .url}'); filter: blur(40px) brightness(0.7); transform: scale(1.1);"
       aria-hidden="true"
     ></div>
   {:else}
@@ -317,7 +324,7 @@
               size="sm"
               class="p-2 lg:hover:bg-[#5865F2] lg:hover:text-white lg:hover:scale-110"
               onclick={handlePrevClick}
-              disabled={loading.prev}
+              disabled={loading.prev || (currentPlayerState !== AudioPlayerStatus.Paused && currentPlayerState !== AudioPlayerStatus.Playing)}
               aria-label="Previous track"
             >
               {#if loading.prev}
@@ -333,11 +340,14 @@
               size="sm"
               class="p-2 lg:hover:bg-[#5865F2] lg:hover:text-white lg:hover:scale-110"
               onclick={handlePlayClick}
-              disabled={loading.play}
+              disabled={loading.play || (currentPlayerState !== AudioPlayerStatus.Paused && currentPlayerState !== AudioPlayerStatus.Playing)}
               aria-label="Play or pause"
             >
-              {#if loading.play}
+              {#if loading.play || currentPlayerState === AudioPlayerStatus.Buffering}
                 <Spinner class="w-5 h-5 lg:w-8 lg:h-8" />
+              {:else if currentPlayerState === AudioPlayerStatus.Playing}
+                <Pause size={20} class="lg:hidden" />
+                <Pause size={64} class="hidden lg:block" />
               {:else}
                 <Play size={20} class="lg:hidden" />
                 <Play size={64} class="hidden lg:block" />
@@ -349,7 +359,7 @@
               size="sm"
               class="p-2 lg:hover:bg-[#5865F2] lg:hover:text-white lg:hover:scale-110"
               onclick={handleNextClick}
-              disabled={loading.next}
+              disabled={loading.next || (currentPlayerState !== AudioPlayerStatus.Paused && currentPlayerState !== AudioPlayerStatus.Playing)}
               aria-label="Next track"
             >
               {#if loading.next}

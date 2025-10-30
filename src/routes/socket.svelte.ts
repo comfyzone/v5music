@@ -8,9 +8,32 @@ export interface ServerToClientEvents {
 export interface ClientToServerEvents {
   userData: (userData: UserData) => void;
   voiceChannelUpdate: (voiceChannel: VoiceChannel) => void;
-  update: (details: Track) => void;
+  update: (details: Track | undefined) => void;
+  playerStateUpdate: (playerState: AudioPlayerStatus) => void;
 }
 
+export enum AudioPlayerStatus {
+    /**
+     * When the player has paused itself. Only possible with the "pause" no subscriber behavior.
+     */
+    AutoPaused = "autopaused",
+    /**
+     * When the player is waiting for an audio resource to become readable before transitioning to Playing.
+     */
+    Buffering = "buffering",
+    /**
+     * When there is currently no resource for the player to be playing.
+     */
+    Idle = "idle",
+    /**
+     * When the player has been manually paused.
+     */
+    Paused = "paused",
+    /**
+     * When the player is actively playing an audio resource.
+     */
+    Playing = "playing"
+}
 
 export interface UserData {
   "id": string,
@@ -70,7 +93,7 @@ export interface Track {
   requester: Requester
   playbackDuration: number
   queueFinished: boolean
-  playerState: string
+  playerState: AudioPlayerStatus
   queueIndex: number
 }
 
