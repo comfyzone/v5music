@@ -28,6 +28,7 @@
   import { Skeleton } from "$lib/components/ui/skeleton";
   import Listeners from "$lib/components/Listeners.svelte";
   import Player from "$lib/components/Player.svelte";
+  import DragAndDrop from "$lib/components/DragAndDrop.svelte";
 
   let listeners: Member[] = [];
 
@@ -68,6 +69,8 @@
     console.log("Song link submitted:", songLink);
   }
 </script>
+
+<DragAndDrop />
 
 <!-- bg -->
 <div
