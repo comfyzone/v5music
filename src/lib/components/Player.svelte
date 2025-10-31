@@ -208,10 +208,7 @@
                         size="sm"
                         class="p-2 lg:hover:bg-[#5865F2] lg:hover:text-white lg:hover:scale-110"
                         onclick={handlePrevClick}
-                        disabled={!currentlyPlaying || currentlyPlaying.queueIndex <= 0 || loading.prev ||
-                            (currentPlayerState !== AudioPlayerStatus.Paused &&
-                                currentPlayerState !==
-                                    AudioPlayerStatus.Playing)}
+                        disabled={!currentQueue || (currentlyPlaying && currentlyPlaying.queueIndex <= 0) || loading.prev}
                         aria-label="Previous track"
                     >
                         {#if loading.prev}
@@ -249,10 +246,7 @@
                         size="sm"
                         class="p-2 lg:hover:bg-[#5865F2] lg:hover:text-white lg:hover:scale-110"
                         onclick={handleNextClick}
-                        disabled={!currentQueue || !currentlyPlaying || currentlyPlaying.queueIndex >= currentQueue.length-1 || loading.next ||
-                            (currentPlayerState !== AudioPlayerStatus.Paused &&
-                                currentPlayerState !==
-                                    AudioPlayerStatus.Playing)}
+                        disabled={!currentQueue || (currentlyPlaying && currentlyPlaying.queueIndex >= currentQueue.length-1) || loading.next}
                         aria-label="Next track"
                     >
                         {#if loading.next}
